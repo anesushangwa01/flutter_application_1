@@ -12,37 +12,28 @@ class _AddFavoritePageState extends State<AddFavoritePage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  String _imagePath = '';
-
-  void _pickImage() async {
-    // For simplicity, use a local image path
-    // In a real app, use the `image_picker` package to select an image
-    setState(() {
-      _imagePath = 'assets/sample_image.jpg'; // Replace with actual image picking logic
-    });
-  }
 
   void _submitForm() {
-    if (_formKey.currentState!.validate() && _imagePath.isNotEmpty) {
+    if (_formKey.currentState!.validate()) {
       final title = _titleController.text;
       final description = _descriptionController.text;
 
-      // Add the favorite to the app state
-      Provider.of<MyAppState>(context, listen: false).addFavorite(
-        title,
-        description,
-        _imagePath,
-      );
+      Provider.of<MyAppState>(context, listen: false).addFavorite(title, description);
 
-      // Clear the form
       _titleController.clear();
       _descriptionController.clear();
-      setState(() {
-        _imagePath = '';
-      });
 
-      // Optionally, navigate to the FavoritesPage
-      Navigator.pop(context);
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      } else {
+        print("No route to pop!");
+        // Options for handling no route:
+        // 1. Stay on the page (do nothing).
+        // 2. Navigate to a default route (e.g., home):
+        // Navigator.pushNamed(context, '/'); // Or Navigator.pushReplacementNamed
+        // 3. Show a message (SnackBar, Dialog):
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Favorite added."))); // User-friendly message
+      }
     }
   }
 
@@ -77,18 +68,6 @@ class _AddFavoritePageState extends State<AddFavoritePage> {
                   }
                   return null;
                 },
-              ),
-              SizedBox(height: 20),
-              if (_imagePath.isNotEmpty)
-                Image.asset(
-                  _imagePath,
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.cover,
-                ),
-              ElevatedButton(
-                onPressed: _pickImage,
-                child: Text('Pick Image'),
               ),
               SizedBox(height: 20),
               ElevatedButton(

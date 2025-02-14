@@ -21,8 +21,7 @@ class FavoritesPage extends StatelessWidget {
         var favorite = appState.favorites[index];
         return FavoriteItem(
           title: favorite.title,
-          description: favorite.description,
-          imagePath: favorite.imagePath,
+          description: favorite.description, imagePath: '',
         );
       },
     );
